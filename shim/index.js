@@ -6,12 +6,11 @@ const toolCache = require('@actions/tool-cache');
 const semver = require("semver");
 
 module.exports = async function run(action) {
-    // Print all environment variables
-    core.info("Environment variables:")
-    for (let key in process.env) {
-        if (process.env.hasOwnProperty(key)) {
-            core.info(`${key}=${process.env[key]}`)
-        }
+    // Dump the event json payload for actions:
+    // https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#workflow_dispatch
+    if (process.env.GITHUB_EVENT_PATH) {
+        console.log("Event payload:")
+        console.log(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
     }
     let isLocalMode = false;
     let version = "v1";
