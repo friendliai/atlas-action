@@ -6,6 +6,13 @@ const toolCache = require('@actions/tool-cache');
 const semver = require("semver");
 
 module.exports = async function run(action) {
+    // Print all environment variables
+    core.info("Environment variables:")
+    for (let key in process.env) {
+        if (process.env.hasOwnProperty(key)) {
+            core.info(`${key}=${process.env[key]}`)
+        }
+    }
     let isLocalMode = false;
     let version = "v1";
 
