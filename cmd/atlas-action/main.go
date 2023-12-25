@@ -6,8 +6,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 
 	"ariga.io/atlas-action/atlasaction"
 	"ariga.io/atlas-go-sdk/atlasexec"
@@ -25,10 +27,23 @@ var cli RunAction
 
 func main() {
 	action := githubactions.New()
+	for _, e := range os.Environ() {
+		action.Infof(e)
+	}
+	ghctx, err := action.Context()
+	if err != nil {
+		action.Fatalf("Failed to create context: %s", err)
+	}
+	ctxout, err := json.Marshal(ghctx)
+	if err != nil {
+		action.Fatalf("Failed to marshal context: %s", err)
+	}
+	action.Infof("Context: %s", ctxout)
 	c, err := atlasexec.NewClient("", "atlas")
 	if err != nil {
 		action.Fatalf("Failed to create client: %s", err)
 	}
+
 	ctx := context.Background()
 	cli := kong.Parse(
 		&cli,
