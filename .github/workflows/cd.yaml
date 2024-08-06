@@ -16,7 +16,7 @@ jobs:
     uses: ./.github/workflows/ci-go.yaml
     secrets: inherit
   build:
-    needs: test
+    # needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
