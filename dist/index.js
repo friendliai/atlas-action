@@ -735,7 +735,8 @@ function run(input) {
                 const body = commentBody(res.cloudURL);
                 if (input.opts.token && input.pr) {
                     const client = new rest_1.Octokit({ auth: input.opts.token });
-                    yield (0, github_1.comment)(client, input.pr, body, res.summary.Env.Dir);
+                    // Use dir from input if provided, otherwise use the one from the summary.
+                    yield (0, github_1.comment)(client, input.pr, body, input.opts.dir || res.summary.Env.Dir);
                 }
                 yield core_1.summary.write();
             }
