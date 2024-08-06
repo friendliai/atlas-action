@@ -43,7 +43,12 @@ export async function run(input: RunInput): Promise<AtlasResult | void> {
       if (input.opts.token && input.pr) {
         const client = new Octokit({ auth: input.opts.token })
         // Use dir from input if provided, otherwise use the one from the summary.
-        await comment(client, input.pr, body, input.opts.dir || res.summary.Env.Dir)
+        await comment(
+          client,
+          input.pr,
+          body,
+          input.opts.dir || res.summary.Env.Dir
+        )
       }
       await summary.write()
     }
