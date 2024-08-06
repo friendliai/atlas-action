@@ -36,7 +36,7 @@ module.exports = async function run(action) {
     let toolPath = toolCache.find(toolName, cacheVersion)
     // Tool Path is the directory where the binary is located. If it is not found, download it.
     if (!toolPath || !fs.existsSync(path.join(toolPath, binaryName))) {
-      const url = `https://do1hfbv3730vd.cloudfront.net/atlas-action-${version}`
+      const url = `https://do1hfbv3730vd.cloudfront.net/atlas-action/atlas-action-${version}`
       const dest = path.join(process.cwd(), 'atlas-action')
       // The action can be run in the same job multiple times.
       // And the cache in only updated after the job is done.
