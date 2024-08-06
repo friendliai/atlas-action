@@ -10450,62 +10450,77 @@ try {
 /***/ 5592:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const childProcess = __nccwpck_require__(2081);
-const fs = __nccwpck_require__(7147);
-const path = __nccwpck_require__(1017);
-const core = __nccwpck_require__(2186);
-const toolCache = __nccwpck_require__(7784);
-const semver = __nccwpck_require__(1383);
+const childProcess = __nccwpck_require__(2081)
+const fs = __nccwpck_require__(7147)
+const path = __nccwpck_require__(1017)
+const core = __nccwpck_require__(2186)
+const toolCache = __nccwpck_require__(7784)
+const semver = __nccwpck_require__(1383)
 
 module.exports = async function run(action) {
-    const binaryName = "atlas-action"
-    // Check for local mode (for testing)
-    const isLocalMode = !(process.env.CI || process.env.GITHUB_ACTION_REPOSITORY && process.env.GITHUB_ACTION_REPOSITORY.length > 0);
-    if (isLocalMode) {
-        // In the local mode, the atlas-action binary is expected to be in the PATH
-        core.info('Running in local mode')
-    } else {
-        // Download the binary if not in local mode
-        let version = "v1";
-        // Check for version number
-        if (process.env.GITHUB_ACTION_REF) {
-            if (process.env.GITHUB_ACTION_REF.startsWith("v")) {
-                version = process.env.GITHUB_ACTION_REF;
-            } else if (process.env.GITHUB_ACTION_REF !== "master") {
-                throw new Error(`Invalid version: ${process.env.GITHUB_ACTION_REF}`)
-            }
-        }
-        core.info(`Using version ${version}`)
-        const toolName = "atlas-action"
-        // We only cache the binary between steps of a single run.
-        const cacheVersion = `${semver.coerce(version).version}-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
-        let toolPath = toolCache.find(toolName, cacheVersion);
-        // Tool Path is the directory where the binary is located. If it is not found, download it.
-        if (!toolPath || !fs.existsSync(path.join(toolPath, binaryName))) {
-            const url = `https://do1hfbv3730vd.cloudfront.net/atlas-action/atlas-action-${version}`;
-            const dest = path.join(process.cwd(), 'atlas-action');
-            // The action can be run in the same job multiple times.
-            // And the cache in only updated after the job is done.
-            if (fs.existsSync(dest)) {
-                core.debug(`Using downloaded binary: ${dest}`)
-            } else {
-                core.info(`Downloading atlas-action binary: ${url} to ${dest}`)
-                await toolCache.downloadTool(url, dest);
-                fs.chmodSync(dest, '700');
-            }
-            toolPath = await toolCache.cacheFile(dest, binaryName, toolName, cacheVersion);
-        }
-        core.addPath(toolPath);
+  const binaryName = 'atlas-action'
+  // Check for local mode (for testing)
+  const isLocalMode = !(
+    process.env.CI ||
+    (process.env.GITHUB_ACTION_REPOSITORY &&
+      process.env.GITHUB_ACTION_REPOSITORY.length > 0)
+  )
+  if (isLocalMode) {
+    // In the local mode, the atlas-action binary is expected to be in the PATH
+    core.info('Running in local mode')
+  } else {
+    // Download the binary if not in local mode
+    let version = 'v1'
+    // Check for version number
+    if (process.env.GITHUB_ACTION_REF) {
+      if (process.env.GITHUB_ACTION_REF.startsWith('v')) {
+        version = process.env.GITHUB_ACTION_REF
+      } else if (process.env.GITHUB_ACTION_REF !== 'master') {
+        throw new Error(`Invalid version: ${process.env.GITHUB_ACTION_REF}`)
+      }
     }
-    const { status, error } = childProcess.spawnSync(binaryName, ['--action', action], {
-        stdio: 'inherit',
-    });
-    if (status !== 0 || error) {
-        core.error(error)
-        core.setFailed(`The process exited with code ${status}`);
-        // Always exit with an error code to fail the action
-        process.exit(status || 1);
+    core.info(`Using version ${version}`)
+    const toolName = 'atlas-action'
+    // We only cache the binary between steps of a single run.
+    const cacheVersion = `${semver.coerce(version).version}-${
+      process.env.GITHUB_RUN_ID
+    }-${process.env.GITHUB_RUN_ATTEMPT}`
+    let toolPath = toolCache.find(toolName, cacheVersion)
+    // Tool Path is the directory where the binary is located. If it is not found, download it.
+    if (!toolPath || !fs.existsSync(path.join(toolPath, binaryName))) {
+      const url = `https://do1hfbv3730vd.cloudfront.net/atlas-action/atlas-action-${version}`
+      const dest = path.join(process.cwd(), 'atlas-action')
+      // The action can be run in the same job multiple times.
+      // And the cache in only updated after the job is done.
+      if (fs.existsSync(dest)) {
+        core.debug(`Using downloaded binary: ${dest}`)
+      } else {
+        core.info(`Downloading atlas-action binary: ${url} to ${dest}`)
+        await toolCache.downloadTool(url, dest)
+        fs.chmodSync(dest, '700')
+      }
+      toolPath = await toolCache.cacheFile(
+        dest,
+        binaryName,
+        toolName,
+        cacheVersion
+      )
     }
+    core.addPath(toolPath)
+  }
+  const { status, error } = childProcess.spawnSync(
+    binaryName,
+    ['--action', action],
+    {
+      stdio: 'inherit'
+    }
+  )
+  if (status !== 0 || error) {
+    core.error(error)
+    core.setFailed(`The process exited with code ${status}`)
+    // Always exit with an error code to fail the action
+    process.exit(status || 1)
+  }
 }
 
 
