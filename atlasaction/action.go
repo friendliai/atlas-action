@@ -547,7 +547,7 @@ func (g *githubAPI) addLintSummary(act Action, payload *atlasexec.SummaryReport)
 		act.Errorf("failed to get issue comments: %v", err)
 		return nil
 	}
-	marker := commentMarker("test")
+	marker := commentMarker(act.GetInput("dir"))
 	comment := struct {
 		Body string `json:"body"`
 	}{

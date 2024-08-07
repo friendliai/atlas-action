@@ -56,6 +56,14 @@ jobs:
         run: |
           aws s3 cp $BINARY_NAME s3://github-actions-tools/atlas-action/$BINARY_NAME
 
+      - name: Invalidate CloudFront
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.RELEASE_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RELEASE_AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.FRIENDLI_CFD_ID }} --paths '/*'
+
   # Run end-to-end test on the published binary.
   e2e-test:
     needs: build
@@ -86,3 +94,4 @@ jobs:
           "dev-url": "sqlite://dev?mode=memory",
           "dir-name": "test-dir"
           }'
+
