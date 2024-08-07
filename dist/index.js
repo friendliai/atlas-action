@@ -736,8 +736,8 @@ function run(input) {
                 if (input.opts.token && input.pr) {
                     const client = new rest_1.Octokit({ auth: input.opts.token });
                     // Use dir from input if provided, otherwise use the one from the summary.
-                    (0, core_1.info)(input.opts.dir);
-                    yield (0, github_1.comment)(client, input.pr, body, input.opts.dir || "test");
+                    (0, core_1.info)(input.opts.dir || "undefined");
+                    yield (0, github_1.comment)(client, input.pr, body, "test");
                 }
                 yield core_1.summary.write();
             }

@@ -48,7 +48,7 @@ export async function run(input: RunInput): Promise<AtlasResult | void> {
           client,
           input.pr,
           body,
-          input.opts.dir || "test"
+          "test"
         )
       }
       await summary.write()
